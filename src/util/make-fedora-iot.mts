@@ -32,7 +32,7 @@ export const makeFedoraIot = (
     .withExec($`dnf install -y rpm-ostree`)
     .withMountedCache(repoDirPath, ostreeRepoCache)
     .withWorkdir(repoDirPath)
-    .withExec($`ostree init --repo=.`)
+    .withExec($`ostree init --repo=. --mode=bare-user`)
     .withExec(
       $`ostree remote add --contenturl=mirrorlist=${repoInfo.mirrorlist} --set=gpgkeypath=${repoInfo.gpgkeypath} ${repoInfo.remoteName} ${repoInfo.url}`,
     )
