@@ -34,7 +34,7 @@ export const makeFedoraIot = (
     .withWorkdir(repoDirPath)
     .withExec($`ostree init --repo=. --mode=bare-user`)
     .withExec(
-      $`ostree remote add --contenturl=mirrorlist=${repoInfo.mirrorlist} --set=gpgkeypath=${repoInfo.gpgkeypath} ${repoInfo.remoteName} ${repoInfo.url}`,
+      $`ostree remote add --force --contenturl=mirrorlist=${repoInfo.mirrorlist} --set=gpgkeypath=${repoInfo.gpgkeypath} ${repoInfo.remoteName} ${repoInfo.url}`,
     )
     .withExec($`ostree pull ${repoInfo.remoteName}:${repoInfo.branch}`)
     .withExec(
