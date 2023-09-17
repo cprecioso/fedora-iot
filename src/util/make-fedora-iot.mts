@@ -19,6 +19,7 @@ export const makeFedoraIot = (
   platform: Platform,
   version: string,
 ) => {
+  const dnfCache = client.cacheVolume("dnf-cache");
   const ostreeRepoCache = client.cacheVolume("ostree-repo");
 
   const repoInfo = makeRepoInfo(platform, version);
@@ -29,6 +30,7 @@ export const makeFedoraIot = (
   const imageFile = client
     .container()
     .from("quay.io/fedora/fedora")
+    .withMountedCache("/var/cache/dnf", dnfCache)
     .withExec($`dnf install -y rpm-ostree`)
     .withMountedCache(repoDirPath, ostreeRepoCache)
     .withWorkdir(repoDirPath)
