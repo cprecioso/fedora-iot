@@ -8,13 +8,18 @@ const IMAGE_NAME = process.env.IMAGE_NAME;
 assert(IMAGE_NAME, "No IMAGE_NAME env given");
 const VERSION = process.env.VERSION;
 assert(VERSION, "No VERSION env given");
+const SOURCE_LABEL = process.env.SOURCE_LABEL;
+assert(SOURCE_LABEL, "No SOURCE_LABEL env given");
 
 connect(
   async (client) => {
     const platforms = ["linux/amd64", "linux/arm64"] as Platform[];
 
     const platformVariants = platforms.map((platform) =>
-      makeFedoraIot(client, platform, VERSION),
+      makeFedoraIot(client, platform, VERSION).withLabel(
+        "org.opencontainers.image.source",
+        SOURCE_LABEL,
+      ),
     );
 
     await client

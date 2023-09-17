@@ -17,6 +17,7 @@ jobs:
       REGISTRY: ghcr.io
       IMAGE_NAME: "${{ github.repository }}"
       VERSION: stable
+      SOURCE_LABEL: "https://github.com/${{ github.repository }}"
 
       DAGGER_CACHE_FROM: type=gha,scope=dagger-build
       DAGGER_CACHE_TO: type=gha,mode=max,scope=dagger-build
