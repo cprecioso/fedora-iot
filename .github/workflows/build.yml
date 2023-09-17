@@ -1,0 +1,53 @@
+name: Build container
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 9 * * *"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+
+    env:
+      REGISTRY: ghcr.io
+      IMAGE_NAME: "${{ github.repository }}"
+      VERSION: stable
+
+      DAGGER_CACHE_FROM: type=gha,scope=dagger-build
+      DAGGER_CACHE_TO: type=gha,mode=max,scope=dagger-build
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # Setup Node
+      - uses: actions/setup-node@v3
+        with:
+          node-version-file: ".node-version"
+
+      - run: corepack enable
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version-file: ".node-version"
+          cache: "yarn"
+
+      # Setup Dagger
+      - run: cd /usr/local && { curl -L https://dl.dagger.io/dagger/install.sh | sh; cd -; }
+
+      # Login to GitHub Packages
+      - uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ github.token }}
+
+      # Install dependencies
+      - run: yarn install --immutable
+
+      # Run pipeline
+      - run: dagger run -- node --loader tsx ./src/build.mts
