@@ -12,6 +12,7 @@ jobs:
     permissions:
       contents: read
       packages: write
+      id-token: write
 
     env:
       REGISTRY: ghcr.io
@@ -40,6 +41,9 @@ jobs:
       # Setup Dagger
       - run: cd /usr/local && { curl -L https://dl.dagger.io/dagger/install.sh | sh; cd -; }
 
+      # Setup Cosign
+      - uses: sigstore/cosign-installer@v3
+
       # Login to GitHub Packages
       - uses: docker/login-action@v3
         with:
@@ -51,4 +55,9 @@ jobs:
       - run: yarn install --immutable
 
       # Run pipeline
-      - run: dagger run -- yarn tsx ./src/build.mts
+      - id: build-publish
+        run: |
+          echo "IMAGE_REF=$(dagger run -- yarn tsx ./src/build.mts)" >> "$GITHUB_OUTPUT"
+
+      # Sign the image
+      - run: cosign sign --yes ${{ steps.build-publish.outputs.IMAGE_REF }}
