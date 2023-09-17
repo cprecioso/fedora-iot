@@ -22,9 +22,11 @@ connect(
       ),
     );
 
-    await client
+    const imageRef = await client
       .container()
       .publish(`${REGISTRY}/${IMAGE_NAME}:${VERSION}`, { platformVariants });
+
+    console.log(imageRef);
   },
   { LogOutput: process.stderr },
 );
