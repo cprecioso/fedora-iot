@@ -50,4 +50,4 @@ jobs:
       - run: yarn install --immutable
 
       # Run pipeline
-      - run: dagger run -- node --loader tsx ./src/build.mts
+      - run: dagger run -- yarn tsx ./src/build.mts
