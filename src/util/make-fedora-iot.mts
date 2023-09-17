@@ -6,18 +6,22 @@ const isas = {
   "linux/arm64": "aarch64",
 };
 
-const makeRepoInfo = (platform: Platform) => ({
+const makeRepoInfo = (platform: Platform, version: string) => ({
   remoteName: "fedora-iot",
   url: "https://ostree.fedoraproject.org/iot",
   mirrorlist: "https://ostree.fedoraproject.org/iot/mirrorlist",
   gpgkeypath: "/etc/pki/rpm-gpg/",
-  branch: `fedora/stable/${isas[platform]}/iot`,
+  branch: `fedora/${version}/${isas[platform]}/iot`,
 });
 
-export const makeFedoraIot = (client: Client, platform: Platform) => {
+export const makeFedoraIot = (
+  client: Client,
+  platform: Platform,
+  version: string,
+) => {
   const ostreeRepoCache = client.cacheVolume("ostree-repo");
 
-  const repoInfo = makeRepoInfo(platform);
+  const repoInfo = makeRepoInfo(platform, version);
 
   const repoDirPath = "/repo";
   const outputFilePath = "/image.tgz";
